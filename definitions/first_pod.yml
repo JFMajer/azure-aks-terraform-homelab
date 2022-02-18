@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: first-pod
+spec:
+  containers:
+  - name: first-container
+    image: stacksimplify/kubenginx:4.0.0
+    resources:
+      requests:
+        cpu: 100m
+        memory: 100Mi
+      limits:
+        cpu: 250m
+        memory: 300Mi
+    ports:
+    - containerPort: 80
+      protocol: TCP
