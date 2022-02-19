@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend-restapp
+  labels:
+    app: backend-restapp
+    tier: backend
+spec:
+  replicas: 5
+  selector:
+    matchLabels:
+      app: backend-restapp
+  template:
+    metadata:
+      labels:
+        app: backend-restapp
+        tier: backend
+    spec:
+      containers:
+      - name: backend-restapp-container
+        image: stacksimplify/kube-helloworld:1.0.0
+        resources:
+          requests:
+            cpu: 100m
+            memory: 100Mi
+          limits:
+            cpu: 250m
+            memory: 300Mi
+        ports:
+        - containerPort: 8080
+          protocol: TCP
+      tolerations:
+      - key: "kubernetes.azure.com/scalesetpriority"
+        operator: "Equal"
+        value: "spot"
+        effect: "NoSchedule"
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: "kubernetes.azure.com/scalesetpriority"
+                operator: In
+                values:
+                - "spot"
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: my-backend-service
+spec:
+  selector:
+    app: backend-restapp
+  ports:
+    - name: http
+      port: 8080 #ClusterIP service port
+      targetPort: 8080 #Container port
+  type: ClusterIP

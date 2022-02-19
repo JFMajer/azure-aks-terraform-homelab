@@ -55,7 +55,7 @@ resource "azurerm_kubernetes_cluster_node_pool" "np" {
   name                  = "aksspotpool"
   kubernetes_cluster_id = azurerm_kubernetes_cluster.k8s.id
   node_count            = 2
-  vm_size               = "Standard_DS2_v2"
+  vm_size               = "Standard_D2S_v5"
   mode                  = "User"
   priority              = "Spot"
 }
