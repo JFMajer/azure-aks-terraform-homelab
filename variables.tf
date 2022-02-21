@@ -19,3 +19,4 @@ variable "ssh_public_key" {
 
 variable "service_principal_client_id" {}
 variable "service_principal_client_secret" {}
+variable "db_password" {}

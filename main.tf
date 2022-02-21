@@ -68,11 +68,5 @@ resource "azurerm_mysql_flexible_server" "mysql" {
   version                = 5.7
   backup_retention_days  = 7
   administrator_login    = "dbadmin"
-  administrator_password = random_string.random.result
-}
-
-resource "random_string" "random" {
-  length           = 16
-  special          = true
-  override_special = "/@£$"
+  administrator_password = var.db_password
 }
