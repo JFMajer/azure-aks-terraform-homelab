@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: azure-files-nginx-deployment
+  labels:
+    app: azure-files-nginx-app
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: azure-files-nginx-app
+  template:
+    metadata:
+      labels:
+        app: azure-files-nginx-app
+    spec:
+      containers:
+        - name: azure-files-nginx-app
+          image: stacksimplify/kube-nginxapp1:1.0.0
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 80
+          volumeMounts:
+            - name: azure-files-pvc
+              mountPath: "usr/share/nginx/html/app1"
+          resources:
+            requests:
+              cpu: 100m
+              memory: 100Mi
+            limits:
+              cpu: 500m
+              memory: 1Gi
+      volumes:
+        - name: azure-files-pvc
+          persistentVolumeClaim:
+            claimName: pvc-azure-files
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: azure-files-nginx-service
+spec:
+  type: LoadBalancer
+  selector:
+    app: azure-files-nginx-app
+  ports:
+    - name: http
+      port: 80
+      targetPort: 80
+    
