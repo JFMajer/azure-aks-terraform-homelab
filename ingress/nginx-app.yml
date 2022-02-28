@@ -1,0 +1,62 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app1-nginx-deployment
+  labels:
+    app: app1-nginx
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: app1-nginx
+  template:
+    metadata:
+      labels:
+        app: app1-nginx
+    spec:
+      containers:
+        - name: app1-nginx
+          image: stacksimplify/kube-nginxapp1:1.0.0
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 80
+          resources:
+            requests:
+              cpu: 100m
+              memory: 100Mi
+            limits:
+              cpu: 500m
+              memory: 1Gi
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: app1-nginx-clusterip-service
+spec:
+  type: ClusterIP
+  selector:
+    app: app1-nginx
+  ports:
+    - name: http
+      port: 80
+      targetPort: 80
+
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: app1-nginx-ingress
+  annotations:
+    kubernetes.io/ingress.class: nginx
+spec:
+  rules:
+    - http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: app1-nginx-clusterip-service
+                port:
+                  number: 80
